@@ -21,41 +21,39 @@
    // Iris has 3 classes; Setosa, versicolor, virginica
    var labels = [0, 1, 2]
    // Iris has two dimensions
-   var dimensions = [2]
+   var dataset_length = dataset.length
+   var features = []
+   var labels = []
+
+   var  features  = tf.tensor2d(dataset.map(item => [
+     item.sepal_length, item.sepal_width, item.petal_length, item.petal_width,
+   ]))
+   var labels = tf.tensor2d(dataset.map(item => [
+     item.species === "setosa" ? 1 : 0,
+     item.species === "virginica" ? 1 : 0,
+     item.species === "versicolor" ? 1 : 0,
+   ]))
 
 
    // Model sequential, simple, linear, limited
    var model = tf.sequential();
    // units - how many neurons , input shape, well, obvious
-   model.add(tf.layers.dense({units: 5, inputShape: [2]}))
-   model.add(tf.layers.dense({units: 5, inputShape: [5]}))
-   // Prediction layer 
+   model.add(tf.layers.dense({units: 10, inputShape: [4]}))
+   model.add(tf.layers.dense({units: 5, inputShape: [10]}))
+   // Prediction layer
    model.add(tf.layers.dense({units: 3, inputShape: [5]}))
-
-
    // Optimization
    var LEARNING_RATE = 0.01;
    var optimizer = tf.train.sgd(LEARNING_RATE)
-
-
    model.compile({ optimizer: optimizer, loss: 'meanSquaredError',metrics: ['accuracy']})
-   // Double check output
-   console.log(JSON.stringify(model.outputs[0].shape))
+   model.fit(features, labels, {
+       epochs: 30,
+       verbose: 2
+   }).then((history) => {
+     console.log(history)
+     model.predict(tf.tensor2d([1.1, 1.1, 1.1, 1.1 ], [1, 4])).print()
 
-   // Testing with dummies
-   var positives =  tf.ones([10, 784])
-   var negatives = tf.zeros([10, 784])
-   var positive_labels = tf.ones([10, 2])
-   var negative_labels = tf.zeros([10, 2])
-
-
-   var training_data = positives.concat(negatives)
-   var training_labels = positive_labels.concat(negative_labels)
-
-   model.fit(training_data,  training_labels, {
-       epochs: 10
-   })
-   model.predict(tf.ones([1, 784])).print();
+  })
 
 
 
@@ -72,7 +70,7 @@
    </style>
  </head>
 <body>
- <h4> MNIST digits recognition </h4>
+ <h4> Iris dataset recognition </h4>
 
 </body>
 </html>
