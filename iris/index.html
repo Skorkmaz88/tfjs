@@ -1,0 +1,78 @@
+<html>
+ <head>
+   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.3/dist/tf.min.js"> </script>
+   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
+   <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
+   <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+
+
+   <script src="iris.js" ></script>
+
+   <script type="text/javascript">
+    /* Oldies but goldies, common functions I carry everywhere to keep it standalone */
+    // Simple utility functions, such as downloading a batch of samples to your browser memory
+
+    /* Iris is small enough data, so let's load it all as from example as loaded
+       iris.js to dataset variable. */
+
+   /* Modelling the machine leanring problem handcrafted */
+
+   var learning_problem_type = "SUPERVISED"
+   // Iris has 3 classes; Setosa, versicolor, virginica
+   var labels = [0, 1, 2]
+   // Iris has two dimensions
+   var dimensions = [2]
+
+
+   // Model sequential, simple, linear, limited
+   var model = tf.sequential();
+   // units - how many neurons , input shape, well, obvious
+   model.add(tf.layers.dense({units: 5, inputShape: [2]}))
+   model.add(tf.layers.dense({units: 5, inputShape: [5]}))
+   // Prediction layer 
+   model.add(tf.layers.dense({units: 3, inputShape: [5]}))
+
+
+   // Optimization
+   var LEARNING_RATE = 0.01;
+   var optimizer = tf.train.sgd(LEARNING_RATE)
+
+
+   model.compile({ optimizer: optimizer, loss: 'meanSquaredError',metrics: ['accuracy']})
+   // Double check output
+   console.log(JSON.stringify(model.outputs[0].shape))
+
+   // Testing with dummies
+   var positives =  tf.ones([10, 784])
+   var negatives = tf.zeros([10, 784])
+   var positive_labels = tf.ones([10, 2])
+   var negative_labels = tf.zeros([10, 2])
+
+
+   var training_data = positives.concat(negatives)
+   var training_labels = positive_labels.concat(negative_labels)
+
+   model.fit(training_data,  training_labels, {
+       epochs: 10
+   })
+   model.predict(tf.ones([1, 784])).print();
+
+
+
+   </script>
+
+
+   <style>
+     h1, h2, h3, h4, h5, h6 {
+     font-family: 'Corben', Georgia, Times, serif;
+    }
+    p, div {
+     font-family: 'Nobile', Helvetica, Arial, sans-serif;
+    }
+   </style>
+ </head>
+<body>
+ <h4> MNIST digits recognition </h4>
+
+</body>
+</html>
